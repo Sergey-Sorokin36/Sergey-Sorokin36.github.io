@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSec Challenges | Хакерские задачи</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #00ff00;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Эффект сканирования */
+        .scan-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            z-index: 1000;
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        /* Эффект мерцания текста */
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                opacity: 0.4;
+            }
+        }
+
+        .flicker {
+            animation: flicker 3s linear infinite;
+        }
+
+        /* Стили для матричного эффекта */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        /* Основной контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Заголовок */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #00ff00;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #00aa00;
+        }
+
+        /* Сетка задач */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* Карточка задачи */
+        .challenge-card {
+            background: rgba(10, 20, 10, 0.7);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
+        }
+
+        .challenge-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+        }
+
+        .challenge-number {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #00ff00;
+            color: #000;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .challenge-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00ff00;
+            text-transform: uppercase;
+        }
+
+        .challenge-description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #aaffaa;
+        }
+
+        .challenge-objective {
+            background: rgba(0, 50, 0, 0.5);
+            padding: 15px;
+            border-left: 3px solid #00ff00;
+            margin-bottom: 20px;
+        }
+
+        .challenge-objective h3 {
+            margin-bottom: 10px;
+            color: #00ff00;
+        }
+
+        .challenge-hint {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0, 100, 0, 0.3);
+            border: 1px dashed #00aa00;
+            font-size: 0.9rem;
+            color: #88ff88;
+        }
+
+        /* Кнопка */
+        .btn {
+            display: inline-block;
+            background: transparent;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px 20px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px #00ff00;
+        }
+
+        /* Футер */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #00ff00;
+            margin-top: 50px;
+            color: #00aa00;
+            font-size: 0.9rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .challenges-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scan-line"></div>
+    <canvas id="matrix"></canvas>
+
+    <div class="container">
+        <header>
+            <h1 class="flicker">CyberSec Challenges</h1>
+            <p class="subtitle">Проверьте свои знания и  навыки в области кибербезопасности</p>
+        </header>
+
+        <main>
+            <div class="challenges-grid">
+                <!-- Задача 1 -->
+                <div class="challenge-card">
+                    <div class="challenge-number">01</div>
+                    <h2 class="challenge-title">Исторический момент</h2>
+                    <p class="challenge-description">
+                    Вам необходимо перейти по предоставленной ниже ссылке на статью, которая рассказывает
+                    о некоторой личности, известной в кругах кибербезопасности.
+
+                    </p>
+                    <div class="challenge-objective">
+                        <h3>Цель задачи:</h3>
+                        <p>Рассекретить личность и найти страницу в социальной сети ВКонтакте с этим именем.</p>
+                    </div>
+                    <div class="challenge-hint">
+                        <strong>Подсказка:</strong> используйте классический адрес VK, добавив имя пользователя и регион организатора олимпиады.
+                        Например, если пользователя зовут Джек Аддамс, а регион организатора - Калужская область, то: https://vk.com/jack_addams40
+                    </div>
+                    <a href="статья.html" target="_blank" class="btn">Перейти к статье</a>
+                </div>
+
+                <!-- Задача 2 -->
+                <div class="challenge-card">
+                    <div class="challenge-number">02</div>
+                    <h2 class="challenge-title">Я иду искать!</h2>
+                    <p class="challenge-description">
+                      Найденный Вами пользователь пытается спрятать в своём профиле некоторые данные.
+                      Докажите, что скрыть информацию в сети не так-то просто.
+                    </p>
+                    <div class="challenge-objective">
+                        <h3>Цель задачи:</h3>
+                        <p>Найти скрытые части URL на странице пользователя, собрать из них полную ссылку и ввести её в адресную строку.</p>
+                    </div>
+                    <div class="challenge-hint">
+                        <strong>Подсказка:</strong> скрытая информация может находиться не только в шапке профиля, но и, например, в списках друзей или групп пользователя.
+                    </div>
+                    <!-- <a href="#" class="btn">Перейти к приложению</a> -->
+                </div>
+
+                <!-- Задача 3 -->
+                <div class="challenge-card">
+                    <div class="challenge-number">03</div>
+                    <h2 class="challenge-title">Последний рывок</h2>
+                    <p class="challenge-description">
+                        Обнаруженные Вами данные ведут на форму с вопросами, которые заставят Вас
+                        вспомнить (или узнать?) всё о кибербезопасности.
+                    </p>
+                    <div class="challenge-objective">
+                        <h3>Цель задачи:</h3>
+                        <p>Заполнить форму правильными ответами, обеспечив достоверность информации.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>IT-Куб Воронеж  &copy; 2025 | Только для образовательных целей</p>
+            <p>Все задачи созданы в учебных целях и не направлены на причинение вреда</p>
+        </footer>
+    </div>
+
+    <script>
+        // Матричный эффект
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&!*';
+        const lettersArray = letters.split('');
+
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = lettersArray[Math.floor(Math.random() * lettersArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        // Адаптация канваса при изменении размера окна
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Эффект печатающего текста для заголовков задач
+        document.querySelectorAll('.challenge-title').forEach(title => {
+            const text = title.textContent;
+            title.textContent = '';
+
+            let i = 0;
+            const typeWriter = () => {
+                if (i < text.length) {
+                    title.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            };
+
+            // Запускаем эффект при появлении элемента в области видимости
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        typeWriter();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+
+            observer.observe(title);
+        });
+    </script>
+</body>
+</html>
